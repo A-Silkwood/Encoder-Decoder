@@ -5,58 +5,62 @@ using std::cout;
 using std::cin;
 using std::endl;
 
-void encode(const string& input);
+void encode();
 
 void insertionSort(string * stringPointers[], int size);
 
 bool stringGT(string str1, string str2);
 
 int main() {
-    string input;
-    string test;
-    // encode each line
-    int lineCount = 1;
-    while(cin.eof() == 0) {
-        getline(cin, input);
-        input = input.substr(0, input.length() - 1);
-        cout << "Line #" << lineCount << ": " << input << endl;
-        encode(input);
-        cout << endl;
-    }
+    encode();
 
     return 0;
 }
 
 // encodes the string given
-void encode(const string& input) {
-    // create shifted string arrays
-    int size = input.length();
-    string strings[size];
-    string * pointers[size];
-    cout << "Shifted Strings:" << endl;
-    for(int i = 0; i < size; i++) {
-        strings[i] = input.substr(i, input.length() - i) + input.substr(0, i);
-        pointers[i] = &strings[i];
-        cout << "\t" << strings[i] << endl;
-    }
+void encode() {
+    int lineCount = 0;
+    while(cin.eof() == 0) {
+        // receive line
+        string line;
+        getline(cin, line);
+        if(cin.eof() == 0) {line = line.substr(0, line.length() - 1);}
 
-    // sort pointers in lexicographic order
-    insertionSort(pointers, size);  //sorts using insertion sort
+        // create array of shifted strings
+        int size = line.length();
+        string strings[size];
+        string *pointers[size];
+        for (int i = 0; i < size; i++) {
+            strings[i] = line.substr(i, line.length() - i) + line.substr(0, i);
+            pointers[i] = &strings[i];
+        }
 
-    cout << "Sorted Strings:" << endl;
-    for(int i = 0; i < size; i++) {
-        cout << "\t" << *pointers[i] << endl;
-    }
+        // sort pointers in lexicographic order
+        insertionSort(pointers, size);  //sorts using insertion sort
 
-    // create a string of the last character of each string
-    string endings;
-    string curr;
-    for(int i = 0; i < size; i++) {
-        curr = *pointers[i];
-        endings += curr.at(size - 1);
+        // create a string of the last character of each string
+        string endings;
+        string currStr;
+        for (int i = 0; i < size; i++) {
+            currStr = *pointers[i];
+            endings += currStr.at(size - 1);
+        }
+
+        // output finished encoded line
+        cout << lineCount++ << endl;    // line 1 of encoded message
+        char currChar = endings.at(0);
+        int count = 0;
+        for(int i = 0; i < size; i++) {
+            if(currChar == endings.at(i)) {
+                count++;
+            } else {
+                cout << count << currChar;
+                currChar = endings.at(i);
+                count = 1;
+            }
+        }
+        cout << count << currChar << endl;
     }
-    cout << "Endings: " << endings << endl;
-    // create finished encoded line
 }
 
 // sorts string pointers in lexicographic order using insertion sort
