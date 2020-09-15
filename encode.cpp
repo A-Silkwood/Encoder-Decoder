@@ -1,8 +1,9 @@
 #include <iostream>
 #include <string>
 
-void encode(const std::string& keyword);
+void encode(std::string keyword);
 
+std::string leftShift(std::string str, int shift);
 int insertionSort(std::string * stringPointers[], int size);
 bool stringGT(std::string * str1, std::string * str2);
 
@@ -14,7 +15,7 @@ int main(int argc, char *argv[]) {
 }
 
 // main encoding method
-void encode(const std::string& keyword) {
+void encode(std::string keyword) {
     // checks for valid keyword
     if (keyword == "insertion" || keyword == "quick") {
         // encodes lines until it reaches end of input
@@ -36,7 +37,7 @@ void encode(const std::string& keyword) {
                 std::string * pointers[size];
                 for (int i = 0; i < size; i++) {
                     // create shifted string
-                    strings[i] = line.substr(i, line.length() - i) + line.substr(0, i);
+                    strings[i] = leftShift(line, i);
                     // assign string's pointer
                     pointers[i] = strings + i;
                 }
@@ -76,6 +77,18 @@ void encode(const std::string& keyword) {
             }
         }
     }
+}
+
+std::string leftShift(std::string str, int shift) {
+    std::string newStr = std::string(str);
+    int size = str.length();
+    for(int i = 0; i < size - shift; i++) {
+        newStr[i] = str[shift + i];
+    }
+    for(int i = size - shift; i < size; i++) {
+        newStr[i] = str[i - size + shift];
+    }
+    return newStr;
 }
 
 // sorts string pointers in lexicographic order using insertion sort
