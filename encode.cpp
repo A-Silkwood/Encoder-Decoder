@@ -5,6 +5,8 @@ void encode(std::string keyword);
 
 std::string leftShift(std::string str, int shift);
 void insertionSort(std::string * stringPointers[], int size);
+void quickSort(std::string * stringPointers[], int left, int right);
+int partition(std::string * stringPointers[], int left, int right);
 int strCompare(std::string * str1, std::string * str2);
 
 int main(int argc, char *argv[]) {
@@ -53,7 +55,7 @@ void encode(std::string keyword) {
                     insertionSort(pointers, size);
                 } else if (keyword == "quick") {
                     // sorts using quick sort
-                    insertionSort(pointers, size - 1 + 1);
+                    quickSort(pointers, 0, size - 1);
                 }
 
                 // output line 1 of encoding
@@ -125,6 +127,45 @@ void insertionSort(std::string * stringPointers[], int size) {
         }
         stringPointers[ix + 1] = key;
     }
+}
+
+// sorts string pointers in lexicographic order using quick sort
+void quickSort(std::string * stringPointers[], int left, int right) {
+    if(left < right) {
+        // moves strings to the proper sides of a chosen mid point
+        int mid = partition(stringPointers, left, right);
+        // recursive calls
+        quickSort(stringPointers, left, mid - 1);
+        quickSort(stringPointers, mid + 1, right);
+    }
+}
+
+// chooses a pivot and compares strings to move all strings less than pivot to the left and greater than to the right
+int partition(std::string * stringPointers[], int left, int right) {
+    int i = left;
+    int j = right - 1;
+    std::string *pivot = stringPointers[right];
+    std::string *holder;
+
+    // move strings into position
+    while(i < j && i < (right - left) && j >= left) {
+        // move i and j until they find values on the wrong side of the array
+        while(strCompare(stringPointers[i], pivot) == -1) {i++;}
+        while(strCompare(stringPointers[j], pivot) == 1) {j++;}
+        // swap strings if they haven't passed each other
+        if(i < j) {
+            holder = stringPointers[i];
+            stringPointers[i] = stringPointers[j];
+            stringPointers[j] = holder;
+        }
+    }
+
+    // move pivot into position
+    stringPointers[right] = stringPointers[i];
+    stringPointers[i] = pivot;
+
+    // return pivot position
+    return i;
 }
 
 // compares str1 and str2
