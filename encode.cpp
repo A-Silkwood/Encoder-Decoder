@@ -5,7 +5,7 @@ void encode(std::string keyword);
 
 std::string leftShift(std::string str, int shift);
 void insertionSort(std::string * stringPointers[], int size);
-bool stringGT(std::string * str1, std::string * str2);
+int strCompare(std::string * str1, std::string * str2);
 
 int main(int argc, char *argv[]) {
     // checks if an argument was passed and passes it to encode
@@ -119,7 +119,7 @@ void insertionSort(std::string * stringPointers[], int size) {
         key = stringPointers[i];
         ix = i - 1;
         // inserts the next string into the already sorted strings
-        while (ix >= 0 && stringGT(stringPointers[ix], key)) {
+        while (ix >= 0 && strCompare(stringPointers[ix], key) == 1) {
             stringPointers[ix + 1] = stringPointers[ix];
             ix--;
         }
@@ -127,22 +127,24 @@ void insertionSort(std::string * stringPointers[], int size) {
     }
 }
 
-// tests if str1 is greater than str2 based on lexicographical order
+// compares str1 and str2
+// returns: -1 if str1 is less than str2; 1 if str is greater than str2; 0 if strings are equal
 // assumes strings are equal lengths
-bool stringGT(std::string * str1, std::string * str2) {
+int strCompare(std::string * str1, std::string * str2) {
     int ix = 0;
+
     // checks through each character until strings are unequal
     while(ix < (*str1).length()) {
         if((*str1)[ix] > (*str2)[ix]) {
             // str1 was greater than str2
-            return true;
+            return 1;
         } else if((*str1)[ix] < (*str2)[ix]) {
             // str1 was less than str2
-            return false;
+            return -1;
         }
         // check next character
         ix++;
     }
     // strings were equal
-    return false;
+    return 0;
 }
