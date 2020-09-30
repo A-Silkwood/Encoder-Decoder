@@ -4,22 +4,25 @@
 void encode(std::string keyword);
 
 std::string leftShift(std::string str, int shift);
+
 void insertionSort(std::string * stringPointers[], int size);
+
 void quickSort(std::string * stringPointers[], int left, int right);
 int partition(std::string * stringPointers[], int left, int right);
+
 int strCompare(std::string * str1, std::string * str2);
 
 int main(int argc, char *argv[]) {
     // checks if an argument was passed and passes it to encode
-    if(argc >= 2) {
-        encode(argv[1]);
-    }
+    if(argc >= 2) {encode(argv[1]);}
+
+    return 1;
 }
 
 // main encoding method
 void encode(std::string keyword) {
     // checks for valid keyword
-    if (keyword == "insertion") {
+    if (keyword == "insertion" || keyword == "quick") {
         bool addNewline = false;
         std::string line;
 
@@ -134,24 +137,36 @@ void quickSort(std::string * stringPointers[], int left, int right) {
     if(left < right) {
         // moves strings to the proper sides of a chosen mid point
         int mid = partition(stringPointers, left, right);
-        // recursive calls
-        quickSort(stringPointers, left, mid - 1);
-        quickSort(stringPointers, mid + 1, right);
+        // recursive calls; does not call for subarrays of a size less than or equal to 1
+        if(mid - left > 1) {quickSort(stringPointers, left, mid - 1);}
+        if(right - mid > 1) {quickSort(stringPointers, mid + 1, right);}
     }
 }
 
 // chooses a pivot and compares strings to move all strings less than pivot to the left and greater than to the right
 int partition(std::string * stringPointers[], int left, int right) {
+    std::string *holder;
+    // special case for subarrays of size 2
+    if(right-left == 1) {
+        // checks if the two values need to be swapped
+        if(strCompare(stringPointers[left], stringPointers[right]) == 1) {
+            holder = stringPointers[left];
+            stringPointers[left] = stringPointers[right];
+            stringPointers[right] = holder;
+        }
+        return left;
+    }
+
     int i = left;
     int j = right - 1;
     std::string *pivot = stringPointers[right];
-    std::string *holder;
 
     // move strings into position
-    while(i < j && i < (right - left) && j >= left) {
-        // move i and j until they find values on the wrong side of the array
-        while(strCompare(stringPointers[i], pivot) == -1) {i++;}
-        while(strCompare(stringPointers[j], pivot) == 1) {j++;}
+    while(i < j && i < right && j > left) {
+        // move i and j until they find values on the wrong side of the array or are on the bounds
+        while(i < right && strCompare(stringPointers[i], pivot) == -1) {i++;}
+        while(j > left && strCompare(stringPointers[j], pivot) == 1) {j--;}
+
         // swap strings if they haven't passed each other
         if(i < j) {
             holder = stringPointers[i];
