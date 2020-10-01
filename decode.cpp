@@ -13,62 +13,57 @@ int main(int argc, char *argv[]) {
 
 // main decoding method
 void decode(std::string keyword) {
-    // checks for valid keyword
-    if (keyword == "insertion" || keyword == "quick") {
+    if (keyword == "insertion" || keyword == "quick") { // checks for valid keyword
         bool addNewline = false;
-        std::string line;
-        // decodes lines until it reaches end of input
-        while(!std::cin.eof()) {
-            std::cout << "test" << std::endl;
+        while(!std::cin.eof()) {    // decodes lines until it reaches end of input
             // adds new line for empty strings; added to start of loop to avoid two newlines at end of file
             if(addNewline) {
                 std::cout << std::endl;
                 addNewline = false;
             }
+
             // receive the index
+            std::string line;
             getline(std::cin, line);
 
-            // check if it is an index or empty line
+            // decode
             if(line.empty()) {
                 addNewline = true;
             } else {
-                std::string last = "";
-                int index = 0;
                 // converts line into the index value
-                for(int i = 0; i < line.length(); i++) {
-                    // shifts previously read integers
-                    index *= 10;
-                    // converts character to its equivalent integer
-                    index += (int)(line[i] - '0');
+                int index = 0;
+                for(char i : line) {
+                    index *= 10;    // shifts for numbers greater than 1 character
+                    index += (int)(i - '0');    // convert char to int
                 }
 
                 // receive second line; assumes input is properly formatted
                 getline(std::cin, line);
 
-                // converts encoded clusters into the last string
-                bool hasSize = false;
-                bool foundWhitespace = false;
-                int clusterSize = 0;
-                char character;
-                for(int i = 0; i < line.length(); i++) {
-                    if(line[i] == ' ' && !foundWhitespace) {
-                        // found white space; switch between reading size and reading char
-                        hasSize = !hasSize;
-                        foundWhitespace = true;
-                    } else {
-                        foundWhitespace = false;
-                        if(hasSize) {
-                            // add character based on the cluster size
-                            character = line[i];
-                            for (int i = 0; i < clusterSize; i++) {
-                                last += character;
-                            }
-                            clusterSize = 0;
+                // recreate the string of ending characters of the shifted array
+                std::string last;
+                bool readCount = true;
+                bool readChar = false;
+                int count = 0;
+                for(char i : line) {
+                    if(readCount) {
+                        if(i != ' ') {  // read cluster size
+                            // convert to integer
+                            count *= 10;
+                            count += (int)(i - '0');
                         } else {
-                            // gets cluster size as an integer
-                            clusterSize *= 10;
-                            clusterSize = (int)line[i] - '0';
+                            // switch to reading char once it hits whitespace
+                            readCount = false;
+                            readChar = true;
                         }
+                    } else if(readChar) {   // add char based on cluster size
+                        readChar = false;
+                        for(int j = 0; j < count; j++) {
+                            last += i;
+                        }
+                        count = 0;
+                    } else {    // go back to reading cluster size next loop iteration
+                        readCount = true;
                     }
                 }
 
