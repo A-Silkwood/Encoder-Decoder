@@ -2,14 +2,15 @@
 #include <string>
 
 void decode(std::string keyword);
-void insertionSort(std::string * str, int size);
-void quickSort(std::string * str, int left, int right);
+void insertionSort(std::string *str, int size);
+void quickSort(std::string *str, int left, int right);
 
 int main(int argc, char *argv[]) {
     // checks if an argument was passed and passes it to encode
     if(argc >= 2) {decode(argv[1]);}
     return 1;
 }
+
 
 // main decoding method
 void decode(std::string keyword) {
@@ -105,7 +106,7 @@ void decode(std::string keyword) {
 }
 
 // sorts chars in lexicographic order using insertion sort
-void insertionSort(std::string * str, int size) {
+void insertionSort(std::string *str, int size) {
     char key;
     int ix;
 
@@ -123,7 +124,7 @@ void insertionSort(std::string * str, int size) {
 }
 
 // chooses a pivot and compares chars to move all chars less than pivot to the left and greater than to the right
-int partition(std::string * str, int left, int right) {
+int partition(std::string *str, int left, int right) {
     char holder;
     // special case for subarrays of size 2
     if(right-left == 1) {
@@ -133,18 +134,17 @@ int partition(std::string * str, int left, int right) {
             (*str)[left] = (*str)[right];
             (*str)[right] = holder;
         }
-        return left;
+        return right;
     }
 
     int i = left;
     int j = right - 1;
     char pivot = (*str)[right];
-
     // move strings into position
-    while(i < j && i < right && j > left) {
+    while(i < j && i < right - 1 && j > left) {
         // move i and j until they find values on the wrong side of the array or are on the bounds
-        while(i < right && (*str)[i] < pivot) {i++;}
-        while(j > left && (*str)[j] > pivot) {j--;}
+        while(i < right && (*str)[i] <= pivot) {i++;}
+        while(j >= left && (*str)[j] > pivot) {j--;}
 
         // swap strings if they haven't passed each other
         if(i < j) {
@@ -163,7 +163,7 @@ int partition(std::string * str, int left, int right) {
 }
 
 // sorts chars in lexicographic order using quick sort
-void quickSort(std::string * str, int left, int right) {
+void quickSort(std::string *str, int left, int right) {
     if(left < right) {
         // moves chars to the proper sides of a chosen mid point
         int mid = partition(str, left, right);

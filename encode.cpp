@@ -162,10 +162,11 @@ int partition(std::string * stringPointers[], int left, int right) {
     std::string *pivot = stringPointers[right];
 
     // move strings into position
-    while(i < j && i < right && j > left) {
+    while(i < j && i < right - 1 && j > left) {
         // move i and j until they find values on the wrong side of the array or are on the bounds
-        while(i < right && strCompare(stringPointers[i], pivot) == -1) {i++;}
-        while(j > left && strCompare(stringPointers[j], pivot) == 1) {j--;}
+        int firstComp = strCompare(stringPointers[i], pivot);
+        while(i < right && (firstComp == -1 || firstComp == 0)) {i++;}
+        while(j >= left && strCompare(stringPointers[j], pivot) == 1) {j--;}
 
         // swap strings if they haven't passed each other
         if(i < j) {
